@@ -19,16 +19,34 @@
 // Game state:
 var w = new World(50);
 var player = null;
-var grass = new Type("grass", "green", false, {'tile': 1});
-var rock = new Type("rock", "gray", false, {'tile': 1}, null, function(action, world) {
-    return false;//action[0].name != "move";
-});
-w.fill([0.8, grass, 100, rock]);
+var started = false;
+
+w.fill([0.8, typeMap['grass'], 100, typeMap['rock']]);
 w.add(new Entity(new Type("player", "black", true, function(){}, function(){}), {'x': 7, 'y': 3}));
 
+function advanceWorld() {
+    player = null;
+    while (!player) {
+        var advanceResult = w.advance();
+
+        if (advanceResult instanceof Entity) {
+            player = advanceResult;
+        } else {
+            if (confirm(getActionDescription(advanceResult))) {
+                runAction(advanceResult, w);
+            }
+        }
+    }
+}
+
+function getActionDescription(action) {
+    return action[0].name + ' ' + action[1].type.name + ' (' + action[0].srcChanges + ') ' + action[2].type.name + ' (' + action[0].trgChanges + ')';
+}
+
 function input(msSinceLastUpdate) {
-    if (!player) {
-        player = w.advance();
+    if (!started) {
+        advanceWorld();
+        started = true;
     }
     for (var i = 0; i < directions.length; i++) {
         var d = directions[i];
@@ -36,7 +54,7 @@ function input(msSinceLastUpdate) {
             var action = [moveActionTypes[i], player, w.tileAt(player.get('x') + d[1], player.get('y') + d[2])];
             if (isActionAllowed(action, w)) {
                 runAction(action, w);
-                player = w.advance();
+                advanceWorld();
             }
             rawKeys[d[0]] = false;
             break;

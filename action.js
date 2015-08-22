@@ -3,7 +3,7 @@ function ActionType(name, blockable, srcChanges, trgChanges, valid) {
     this.blockable = blockable;
     this.srcChanges = srcChanges;
     this.trgChanges = trgChanges;
-    this.valid = valid || function() {};
+    this.valid = valid || function() { return true; };
 }
 
 ActionType.prototype.isValid = function(src, trg, world) {
@@ -30,18 +30,22 @@ function applyChanges(e, changes) {
             e.set(ch, 1);
         } else {
             var n = ch[0];
-            var op = ch.length == 3 ? ch[1] : "=";
-            var v = ch.length == 3 ? parseInt(ch[2]) : parseInt(ch[1]);
-            switch (op) {
-                case "=":
-                    e.set(n, v);
-                    break;
-                case "+":
-                    e.set(n, e.get(n) + v)
-                    break;
-                case "-":
-                    e.set(n, e.get(n) - v)
-                    break;
+            if (n == 'type') {
+                e.setType(typeMap[ch[1]]);
+            } else {
+                var op = ch.length == 3 ? ch[1] : "=";
+                var v = ch.length == 3 ? ch[2] : ch[1];
+                switch (op) {
+                    case "=":
+                        e.set(n, parseInt(v));
+                        break;
+                    case "+":
+                        e.set(n, e.get(n) + parseInt(v))
+                        break;
+                    case "-":
+                        e.set(n, e.get(n) - parseInt(v))
+                        break;
+                }
             }
         }
     });

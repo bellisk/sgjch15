@@ -57,11 +57,22 @@ World.prototype.advance = function () {
 
     while (!this.entities[this.entityIndex].type.isPlayer) {
         var e = this.entities[this.entityIndex];
+        this.entityIndex = (this.entityIndex + 1) % this.entities.length;
         var x = e.get('x');
         var y = e.get('y');
-        e.type.tick(e, this);
+
+        var eAction = e.type.tick(e, this);
+        if (eAction) {
+            if (eAction[2].type.isPlayer) {
+                return eAction;
+            } else {
+                if (isActionAllowed(eAction, this)) {
+                    runAction(eAction, this);
+                }
+            }
+        }
+
         this.updateCellMembership(x, y);
-        this.entityIndex = (this.entityIndex + 1) % this.entities.length;
 
         if (this.entityIndex == 0) {
             this.entities = this.entities.filter(function (e) {
@@ -99,7 +110,7 @@ World.prototype.getNeighbours = function (e) {
     var ex = e.get('x');
     var ey = e.get('y');
     for (var dy = -1; dy < 2; dy++) { for (var dx = -1; dx < 2; dx++) {
-        if (dy < 0 || dx < 0 || dy >= this._map.length || dx >= this._map[0].length) {
+        if (ey + dy < 0 || ex + dx < 0 || ey + dy >= this._map.length || ex + dx >= this._map[0].length) {
             continue;
         }
         this._map[ey + dy][ex + dx].forEach(function (e2) {
