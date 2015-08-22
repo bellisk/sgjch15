@@ -22,7 +22,17 @@ var player = null;
 var started = false;
 
 w.fill([0.8, typeMap['grass'], 100, typeMap['rock']]);
-w.add(new Entity(new Type("player", "black", true, function(){}, function(){}), {'x': 7, 'y': 3}));
+w.add(new Entity(new Type("player", "black", true, {}, function(e, world){
+    var neighbours = world.getNeighbours(e);
+    var grass = neighbours.filter(function (n) {
+        return n.get('x') == e.get('x') && n.get('y') == e.get('y') && n.type.name == 'grass';
+    });
+    if (grass.length > 0) {
+        grass = grass[0];
+        return [new ActionType('plant', false, '', 'new flower'), e, grass];
+    }
+    return null;
+}, function(){}), {'x': 7, 'y': 3}));
 
 function advanceWorld() {
     player = null;
@@ -31,6 +41,10 @@ function advanceWorld() {
 
         if (advanceResult instanceof Entity) {
             player = advanceResult;
+            var playerAction = player.type.tick(player, w);
+            if (playerAction && isActionAllowed(playerAction, w)) {
+                runAction(playerAction, w);
+            }
         } else {
             if (confirm(getActionDescription(advanceResult))) {
                 runAction(advanceResult, w);

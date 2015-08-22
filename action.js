@@ -22,7 +22,7 @@ function runAction(a, world) {
     return a[0].run(a[1], a[2], world);
 }
 
-function applyChanges(e, changes) {
+function applyChanges(e, changes, world) {
     changes.split(",").forEach(function(ch) {
         ch = ch.trim();
         ch = ch.split(" ");
@@ -32,6 +32,8 @@ function applyChanges(e, changes) {
             var n = ch[0];
             if (n == 'type') {
                 e.setType(typeMap[ch[1]]);
+            } else if (n == 'new') {
+                world.add(new Entity(typeMap[ch[1]], {'x': e.get('x'), 'y': e.get('y')}));
             } else {
                 var op = ch.length == 3 ? ch[1] : "=";
                 var v = ch.length == 3 ? ch[2] : ch[1];
@@ -52,8 +54,8 @@ function applyChanges(e, changes) {
 }
 
 ActionType.prototype.run = function(src, trg, world) {
-    applyChanges(src, this.srcChanges);
-    applyChanges(trg, this.trgChanges);
+    applyChanges(src, this.srcChanges, world);
+    applyChanges(trg, this.trgChanges, world);
 };
 
 var moveActionTypes = [

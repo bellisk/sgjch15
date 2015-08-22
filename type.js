@@ -46,7 +46,8 @@ var types = [
         }, function(action, world) {
             return false;//action[0].name != "move";
         }
-    )
+    ),
+    new Type("flower", "pink", false, {})
 ];
 
 var typeMap = {};
