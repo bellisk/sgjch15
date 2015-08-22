@@ -1,6 +1,6 @@
 function Entity(type, properties) {
     this.type = type;
-    this.properties = $.extend({}, properties || {});
+    this.properties = $.extend({}, type.defaults || {}, properties || {});
 }
 
 Entity.prototype.get = function (name) {

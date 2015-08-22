@@ -5,6 +5,10 @@
         <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
         <script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
         <script src="entity.js"></script>
+        <script src="type.js"></script>
+        <script src="world.js"></script>
+        <script src="action.js"></script>
+        <script src="drawmap.js"></script>
     </head>
     <body>
         <canvas width="800" height="600" id="gameCanvas"></canvas>
@@ -13,18 +17,37 @@
 /** THE GAME ITSELF **********************************************************/
 
 // Game state:
-// TODO
+var w = new World(50);
+var player = null;
+var grass = new Type("grass", "green", false, {'tile': 1});
+var rock = new Type("rock", "gray", false, {'tile': 1}, null, function(action, world) {
+    return false;//action[0].name != "move";
+});
+w.fill([0.8, grass, 100, rock]);
+w.add(new Entity(new Type("player", "black", true, function(){}, function(){}), {'x': 7, 'y': 3}));
 
 function input(msSinceLastUpdate) {
-    // TODO
+    if (!player) {
+        player = w.advance();
+    }
+    for (var i = 0; i < directions.length; i++) {
+        var d = directions[i];
+        if (rawKeys[d[0]]) {
+            var action = [moveActionTypes[i], player, w.tileAt(player.get('x') + d[1], player.get('y') + d[2])];
+            if (isActionAllowed(action, w)) {
+                runAction(action, w);
+                player = w.advance();
+            }
+            rawKeys[d[0]] = false;
+            break;
+        }
+    }
 }
 
-function update(msSinceLastUpdate) {
-    // TODO
-}
+function update(msSinceLastUpdate) {}
 
 function draw() {
-    // TODO
+    drawMap(c, w, 0, 0);
 }
 
 
@@ -32,15 +55,27 @@ function draw() {
 var canvas = document.getElementById("gameCanvas");
 var c = canvas.getContext("2d");
 var keys = {};
+var rawKeys = {};
 var click = null;
+
+var UP = 38;
+var DOWN = 40;
+var LEFT = 37;
+var RIGHT = 39;
+
+var directions = [
+    [UP, 0, -1], [DOWN, 0, 1], [LEFT, -1, 0], [RIGHT, 1, 0]
+];
 
 // Listen for key presses.
 function canvasKeyDown(e) {
     keys[String.fromCharCode(e.which)] = true;
+    rawKeys[e.which] = true;
 }
 
 function canvasKeyUp(e) {
     keys[String.fromCharCode(e.which)] = false;
+    rawKeys[e.which] = false;
 }
 
 $('body').keydown(canvasKeyDown);
