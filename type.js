@@ -16,38 +16,32 @@ Type.prototype.respond = function (action, world) {
 };
 
 var types = [
-    new Type("grass", "green", false, {'tile': 1},
-        function (e, world) {
-            //var neighbours = world.getNeighbours(e);
-            //var player = neighbours.filter(function (n) {
-            //    return n.get('x') == e.get('x') && n.get('y') == e.get('y') && n.type.isPlayer;
-            //});
-            //if (player.length > 0) {
-            //    player = player[0];
-            //    return [new ActionType('move', true, '', 'x + 1'), e, player];
-            //}
-            return null;
-        }
-    ),
-    new Type("rock", "gray", false, {'tile': 1},
-        function(e, world) {
-            if (Math.random() < 0.99) {
-                return null;
-            }
-            var neighbours = world.getNeighbours(e);
-            var grass = neighbours.filter(function (n) {
-                return n.type.name == 'grass';
-            });
-            if (grass.length > 0) {
-                grass = grass[0];
-                return [new ActionType('petrify', false, '', 'type rock'), e, grass];
-            }
-            return null;
-        }, function(action, world) {
-            return false;//action[0].name != "move";
-        }
-    ),
-    new Type("flower", "pink", false, {})
+    new Type("angerbush", "angerbush-2", false, {'tile': 1}),
+    new Type("boneyard", "boneyard", false, {'tile': 1}),
+    new Type("bower", "bower", false, {'tile': 1}),
+    new Type("brewer", "brewer", false, {'tile': 1}),
+    new Type("butcher", "butcher", false, {'tile': 1}),
+    new Type("desert", "desert", false, {'tile': 1}),
+    new Type("geysir", "geysir", false, {'tile': 1}),
+    new Type("grass", "grass", false, {'tile': 1}),
+    new Type("hole", "hole", false, {'tile': 1}),
+    new Type("hut", "hut", false, {'tile': 1}),
+    new Type("jeweller", "jeweller", false, {'tile': 1}),
+    new Type("kitchen", "kitchen", false, {'tile': 1}),
+    new Type("meeting-hall", "meeting-hall", false, {'tile': 1}),
+    new Type("mountain-dreamer", "mountain-dreamer", false, {'tile': 1}),
+    new Type("obsidian", "obsidian", false, {'tile': 1}),
+    new Type("rock", "rock", false, {'tile': 1}),
+    new Type("skull-dreamer", "skull-dreamer", false, {'tile': 1}),
+    new Type("temple", "temple", false, {'tile': 1}),
+    new Type("tree", "tree-1", false, {'tile': 1}),
+    new Type("vine-dreamer", "vine-dreamer", false, {'tile': 1}),
+    new Type("vines", "vines", false, {'tile': 1}),
+    new Type("wall", "wall", false, {'tile': 1}),
+    new Type("water", "water", false, {'tile': 1}),
+    new Type("weaponsmith", "weaponsmith", false, {'tile': 1}),
+    new Type("weaver", "weaver", false, {'tile': 1}),
+    new Type("boneyard", "boneyard", false, {'tile': 1})
 ];
 
 var typeMap = {};

@@ -14,5 +14,4 @@ Entity.prototype.set = function(name, value) {
 Entity.prototype.setType = function (newType) {
     this.type = newType;
     this.properties = $.extend(this.properties, newType.defaults || {});
-
 };
