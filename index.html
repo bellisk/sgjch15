@@ -59,7 +59,10 @@ function input(msSinceLastUpdate) {
     }
     if (request) {
         if (keys['Y']) {
+            var opx = thePlayer.get('x');
+            var opy = thePlayer.get('y');
             runAction(request, w);
+            w.updateCellMembership(opx, opy);
             request = advanceWorld();
             keys['Y'] = false;
         } else if (keys['N']) {
