@@ -1,9 +1,10 @@
-function ActionType(name, blockable, srcChanges, trgChanges, valid) {
+function ActionType(name, blockable, srcChanges, trgChanges, valid, describe) {
     this.name = name;
     this.blockable = blockable;
     this.srcChanges = srcChanges;
     this.trgChanges = trgChanges;
     this.valid = valid || function() { return true; };
+    this.describe = describe || function () { return [name, null]; };
 }
 
 ActionType.prototype.isValid = function(src, trg, world) {
@@ -15,7 +16,15 @@ function isActionValid(a, world) {
 }
 
 function isActionAllowed(a, world) {
-    return !a[0].blockable || a[2].type.respond(a, world);
+    return !a[0].blockable || !a[2].type.respond(a, world);
+}
+
+function getActionResponse(a, world) {
+    return a[2].type.respond(a, world);
+}
+
+function getActionDescription(a, world) {
+    return a[0].describe(a, world);
 }
 
 function runAction(a, world) {

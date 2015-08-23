@@ -22,6 +22,8 @@ var w = new World(50);
 mapgen(w);
 var player = null;
 var started = false;
+var msg = '';
+var msgTimeout = 0;
 
 /*var fillTypes = new Array();
 var fraction = 1.0 / types.length + 0.01;
@@ -31,7 +33,7 @@ types.forEach(function(t) {
 });
 
 w.fill(fillTypes);*/
-var thePlayer = new Entity(new Type("player", "player", true, {}), {'x': 7, 'y': 3});
+var thePlayer = new Entity(new Type("player", "player", true, {}), {'x': 27, 'y': 13});
 w.add(thePlayer);
 
 function advanceWorld() {
@@ -58,6 +60,7 @@ function getActionDescription(action) {
 }
 
 function input(msSinceLastUpdate) {
+    msgTimeout -= msSinceLastUpdate;
     if (!started) {
         advanceWorld();
         started = true;
@@ -69,6 +72,9 @@ function input(msSinceLastUpdate) {
             if (isActionAllowed(action, w)) {
                 runAction(action, w);
                 advanceWorld();
+            } else {
+                msg = getActionResponse(action, w);
+                msgTimeout = 1000;
             }
             rawKeys[d[0]] = false;
             break;
@@ -80,6 +86,11 @@ function update(msSinceLastUpdate) {}
 
 function draw() {
     drawMap(c, w, thePlayer.get('x') - 5, thePlayer.get('y') - 6);
+    if (msgTimeout > 0) {
+        c.fillStyle = '#fedbb1';
+        c.font = '20px Arial';
+        c.fillText(msg[0], 5, 25);
+    }
 }
 
 
