@@ -40,7 +40,28 @@ var types = [
         return ['You need a rope to climb this rock', null];
     }),
     new Type("skull-dreamer", "skull-dreamer", false, {'tile': 1}),
-    new Type("temple", "temple", false, {'tile': 1}),
+    new Type("temple", "temple", false, {'tile': 1}, function (e, world) {
+        if (!e.get('dream')) {
+            e.set('dream', randint(dreams.length) + 1);
+        }
+        if (e.get('visitedTemple')) {
+            return null;
+        }
+        var neighbours = world.getNeighbours(e);
+        var player = neighbours.filter(function(e2) {
+            return e.get('x') == e2.get('x') && e.get('y') == e2.get('y') && e2.type.isPlayer;
+        });
+        if (player.length > 0) {
+            e.set('visitedTemple', 1);
+            return [
+                new ActionType('templeVisit', true, '', '', null, function () {
+                    return dreams[e.get('dream') - 1];
+                }),
+                e,
+                player[0]
+            ];
+        }
+    }),
     new Type("tree", "tree-1", false, {'tile': 1}),
     new Type("vine-dreamer", "vine-dreamer", false, {'tile': 1}),
     new Type("vines", "vines", false, {'tile': 1}, null, function (a, world) {
@@ -120,3 +141,14 @@ var typeMap = {};
 types.forEach(function(t) {
     typeMap[t.name] = t;
 });
+
+var dreams = [
+    ["A didactic donkey", "dream1"],
+    ["Floating towards the sky", "dream2"],
+    ["A dream of suffocation", "dream3"],
+    ["A man made of multitudes", "dream4"],
+    ["A dream of time and death", "dream5"],
+    ["The servant of a squirrel", "dream6"],
+    ["A bat and an elephant confer", "dream7"],
+    ["A tired sphinx", "dream8"]
+]
