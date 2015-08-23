@@ -73,9 +73,8 @@ var types = [
         });
         if (player.length > 0) {
             e.set('visitedTemple', 1);
-            e.set('dream' + (e.get('dream') - 1), 1);
             return [
-                new ActionType('templeVisit', true, '', '', null, function () {
+                new ActionType('templeVisit', true, '', 'dream' + (e.get('dream')) + ' = 1', null, function () {
                     return dreams[e.get('dream') - 1];
                 }),
                 e,
