@@ -2,13 +2,14 @@
 <html>
     <head>
         <title>SGJCH15</title>
-        <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
-        <script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+        <script src="jquery/jquery-1.11.0.min.js"></script>
+        <script src="jquery/jquery-migrate-1.2.1.min.js"></script>
         <script src="entity.js"></script>
         <script src="type.js"></script>
         <script src="world.js"></script>
         <script src="action.js"></script>
         <script src="drawmap.js"></script>
+        <script src="mapgen.js"></script>
     </head>
     <body style="background: #222222;">
         <div style="margin: 0 auto; width: 800px;"><canvas width="800" height="600" id="gameCanvas"></canvas></div>
@@ -18,17 +19,18 @@
 
 // Game state:
 var w = new World(50);
+mapgen(w);
 var player = null;
 var started = false;
 
-var fillTypes = new Array();
+/*var fillTypes = new Array();
 var fraction = 1.0 / types.length + 0.01;
 types.forEach(function(t) {
     fillTypes.push(fraction);
     fillTypes.push(t);
 });
 
-w.fill(fillTypes);
+w.fill(fillTypes);*/
 var thePlayer = new Entity(new Type("player", "player", true, {}), {'x': 7, 'y': 3});
 w.add(thePlayer);
 

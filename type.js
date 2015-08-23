@@ -41,7 +41,7 @@ var types = [
     new Type("water", "water", false, {'tile': 1}),
     new Type("weaponsmith", "weaponsmith", false, {'tile': 1}),
     new Type("weaver", "weaver", false, {'tile': 1}),
-    new Type("boneyard", "boneyard", false, {'tile': 1})
+    new Type("candlemaker", "candlemaker", false, {'tile': 1})
 ];
 
 var typeMap = {};
