@@ -49,19 +49,22 @@ var tribeTypes = [
         'image': 'bat',
         'creature': 'bat',
         'dreamer': dreamerTypes[0],
-        'buildings': ['hut', 'hut', 'hut', 'brewer', 'candlemaker', 'kitchen', 'meeting-hall', 'temple'].map(function(n) { return typeMap[n]; })
+        'buildings': ['hut', 'hut', 'hut', 'brewer', 'candlemaker', 'kitchen', 'meeting-hall', 'temple'].map(function(n) { return typeMap[n]; }),
+        'population': 5
     },
     {
         'image': 'star-nosed-mole',
         'creature': 'star-nosed-mole',
         'dreamer': dreamerTypes[1],
-        'buildings': ['hut', 'hut', 'hut', 'kitchen', 'meeting-hall', 'temple'].map(function(n) { return typeMap[n]; })
+        'buildings': ['hut', 'hut', 'hut', 'kitchen', 'meeting-hall', 'temple'].map(function(n) { return typeMap[n]; }),
+        'population': 5
     },
     {
         'image': 'bower-bird',
         'creature': 'bower-bird',
         'dreamer': dreamerTypes[2],
-        'buildings': ['hut', 'hut', 'hut', 'bower', 'bower', 'bower', 'kitchen', 'meeting-hall', 'temple', 'weaver', 'weaponsmith'].map(function(n) { return typeMap[n]; })
+        'buildings': ['hut', 'hut', 'hut', 'bower', 'bower', 'bower', 'kitchen', 'meeting-hall', 'temple', 'weaver', 'weaponsmith'].map(function(n) { return typeMap[n]; }),
+        'population': 5
     }
 ];
 
@@ -224,6 +227,8 @@ function mapgen(w) {
                 }
             }}
         }
+        tt.gx = gx;
+        tt.gy = gy;
         tt.buildings.forEach(function (bt) {
             var tx = 0;
             var ty = 0;
@@ -234,10 +239,24 @@ function mapgen(w) {
             grid[ty][tx] = bt;
         });
     });
-    
+
+    // Create grid entities
     for (var y = 0; y < sz; y++) { for (var x = 0; x < sz; x++) {
         w.add(new Entity(grid[y][x], {'x': x, 'y': y}));
     }}
+
+    // Villagers
+    tribeTypes.forEach(function(tt) {
+        for (var i = 0; i < tt.population; i++) {
+            var x = 0;
+            var y = 0;
+            while (tt.buildings.indexOf(grid[y][x]) == -1) {
+                x = tt.gx + randint(tt.buildings.length);
+                y = tt.gy + randint(tt.buildings.length);
+            }
+            w.add(new Entity(typeMap[tt.creature], {'x': x, 'y': y}));
+        }
+    })
 }
 
 function plusOrMinusOne() {

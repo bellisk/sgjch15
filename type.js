@@ -55,7 +55,64 @@ var types = [
     }),
     new Type("weaponsmith", "weaponsmith", false, {'tile': 1}),
     new Type("weaver", "weaver", false, {'tile': 1}),
-    new Type("candlemaker", "candlemaker", false, {'tile': 1})
+    new Type("candlemaker", "candlemaker", false, {'tile': 1}),
+    new Type("bat", "native", false, {}, function (e, world) {
+        if (e.get('saidHello')) {
+            return null;
+        }
+        var neighbours = world.getNeighbours(e);
+        var player = neighbours.filter(function(e2) {
+            return e.get('x') == e2.get('x') && e.get('y') == e2.get('y') && e2.type.isPlayer;
+        });
+        if (player.length > 0) {
+            e.set('saidHello', 1);
+            return [
+                new ActionType('hello', true, '', '', null, function () {
+                    return ["You meet a local villager with the\nhead of a bat", "bat"]
+                }),
+                e,
+                player[0]
+            ];
+        }
+    }),
+    new Type("star-nosed-mole", "native", false, {}, function (e, world) {
+        if (e.get('saidHello')) {
+            return null;
+        }
+        var neighbours = world.getNeighbours(e);
+        var player = neighbours.filter(function(e2) {
+            return e.get('x') == e2.get('x') && e.get('y') == e2.get('y') && e2.type.isPlayer;
+        });
+        if (player.length > 0) {
+            e.set('saidHello', 1);
+            return [
+                new ActionType('hello', true, '', '', null, function () {
+                    return ["You meet a local villager with the\nhead of a star-nosed mole", "star-nosed-mole"]
+                }),
+                e,
+                player[0]
+            ];
+        }
+    }),
+    new Type("bower-bird", "native", false, {}, function (e, world) {
+        if (e.get('saidHello')) {
+            return null;
+        }
+        var neighbours = world.getNeighbours(e);
+        var player = neighbours.filter(function(e2) {
+            return e.get('x') == e2.get('x') && e.get('y') == e2.get('y') && e2.type.isPlayer;
+        });
+        if (player.length > 0) {
+            e.set('saidHello', 1);
+            return [
+                new ActionType('hello', true, '', '', null, function () {
+                    return ["You meet a local villager with the\nhead of a bower bird", "bower-bird"]
+                }),
+                e,
+                player[0]
+            ];
+        }
+    })
 ];
 
 var typeMap = {};

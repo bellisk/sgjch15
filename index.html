@@ -24,15 +24,8 @@ var player = null;
 var started = false;
 var msg = '';
 var msgTimeout = 0;
+var request = null;
 
-/*var fillTypes = new Array();
-var fraction = 1.0 / types.length + 0.01;
-types.forEach(function(t) {
-    fillTypes.push(fraction);
-    fillTypes.push(t);
-});
-
-w.fill(fillTypes);*/
 var thePlayer = new Entity(new Type("player", "player", true, {}), {'x': 27, 'y': 13});
 w.add(thePlayer);
 
@@ -48,22 +41,27 @@ function advanceWorld() {
                 runAction(playerAction, w);
             }
         } else {
-            if (confirm(getActionDescription(advanceResult))) {
-                runAction(advanceResult, w);
-            }
+            return advanceResult;
         }
     }
+    return null;
 }
 
-function getActionDescription(action) {
+function getActionDetails(action) {
     return action[0].name + ' ' + action[1].type.name + ' (' + action[0].srcChanges + ') ' + action[2].type.name + ' (' + action[0].trgChanges + ')';
 }
 
 function input(msSinceLastUpdate) {
     msgTimeout -= msSinceLastUpdate;
     if (!started) {
-        advanceWorld();
+        request = advanceWorld();
         started = true;
+    }
+    if (request) {
+        if (keys['Y']) {
+            request = advanceWorld();
+        }
+        return;
     }
     for (var i = 0; i < directions.length; i++) {
         var d = directions[i];
@@ -71,7 +69,7 @@ function input(msSinceLastUpdate) {
             var action = [moveActionTypes[i], player, w.tileAt(player.get('x') + d[1], player.get('y') + d[2])];
             if (isActionAllowed(action, w)) {
                 runAction(action, w);
-                advanceWorld();
+                request = advanceWorld();
             } else {
                 msg = getActionResponse(action, w);
                 msgTimeout = 1000;
@@ -90,6 +88,20 @@ function draw() {
         c.fillStyle = '#fedbb1';
         c.font = '20px Arial';
         c.fillText(msg[0], 5, 25);
+    }
+    if (request) {
+        var content = getActionDescription(request, w);
+        c.fillStyle = '#fedbb1';
+        c.fillRect(90, 140, 620, 320);
+        drawImg(c, content[1], 100, 150);
+        c.fillStyle = '#5d3606';
+        c.font = '20px Arial';
+        var y = 170;
+        content[0].split("\n").forEach(function(l) {
+            c.fillText(l, 410, y);
+            y += 30;
+        });
+        c.fillText("(Y to confirm)", 410, y + 30);
     }
 }
 
