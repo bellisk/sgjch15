@@ -201,13 +201,13 @@ function mapgen(w) {
     }}
     
     // Villages
-    var gridSize = 5;
     tribeTypes.forEach(function (tt) {
+        var gridSize = tt.buildings.length;
         var gx = 0;
         var gy = 0;
         var dreamerPresent = false;
         var grassCount = 0;
-        while (!dreamerPresent || grassCount < 12) {
+        while (!dreamerPresent || grassCount < tt.buildings.length + 5) {
             gx++;
             if (gx >= sz - gridSize) {
                 gx = 0;
@@ -228,8 +228,8 @@ function mapgen(w) {
             var tx = 0;
             var ty = 0;
             while (grid[ty][tx] != grass) {
-                tx = gx + randint(5);
-                ty = gy + randint(5);
+                tx = gx + randint(gridSize);
+                ty = gy + randint(gridSize);
             }
             grid[ty][tx] = bt;
         });
