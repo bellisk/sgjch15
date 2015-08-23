@@ -62,6 +62,9 @@ function input(msSinceLastUpdate) {
             runAction(request, w);
             request = advanceWorld();
             keys['Y'] = false;
+        } else if (keys['N']) {
+            request = advanceWorld();
+            keys['N'] = false;
         }
         return;
     }
@@ -124,7 +127,11 @@ function draw() {
             c.fillText(l, 410, y);
             y += 30;
         });
-        c.fillText("(Y to confirm)", 410, y + 30);
+        if (request[0].blockable) {
+            c.fillText("(Y/N)", 410, y + 30);
+        } else {
+            c.fillText("(Y to confirm)", 410, y + 30);
+        }
     }
 }
 

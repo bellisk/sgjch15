@@ -44,7 +44,37 @@ var types = [
     new Type("desert", "desert", false, {'tile': 1}),
     new Type("geysir", "geysir", false, {'tile': 1}),
     new Type("grass", "grass", false, {'tile': 1}),
-    new Type("hole", "hole", false, {'tile': 1}),
+    new Type("hole", "hole", false, {'tile': 1}, function(e, world) {
+        while (!e.get('tx')) {
+            var cx = randint(world._map.length);
+            var cy = randint(world._map.length);
+            if (cx != e.get('x') || cy != e.get('y')) {
+                var entities = world._map[cy][cx];
+                var otherHole = entities.filter(function(e2) {
+                    return e2.type.name == 'hole';
+                });
+                if (otherHole.length > 0) {
+                    e.set('tx', cx);
+                    e.set('ty', cy);
+                    otherHole[0].set('tx', e.get('x'));
+                    otherHole[0].set('ty', e.get('y'));
+                }
+            }
+        }
+        var neighbours = world.getNeighbours(e);
+        var player = neighbours.filter(function(e2) {
+            return e.get('x') == e2.get('x') && e.get('y') == e2.get('y') && e2.type.isPlayer;
+        });
+        if (player.length > 0 && !player[0].get('caveTraveled') && player[0].get('candle')) {
+            return [
+                new ActionType('travelThroughCaves', true, true, '', 'candle - 1, caveTraveled = 1, x = ' + e.get('tx') + ', y = ' + e.get('ty'), null, function () {
+                    return ["You find a dark hole.\nTravel through it?", "large-hole"];
+                }),
+                e,
+                player[0]
+            ];
+        }
+    }),
     new Type("hut", "hut", false, {'tile': 1}),
     new Type("jeweller", "jeweller", false, {'tile': 1}),
     new Type("kitchen", "kitchen", false, {'tile': 1}),
@@ -74,7 +104,7 @@ var types = [
         if (player.length > 0) {
             e.set('visitedTemple', 1);
             return [
-                new ActionType('templeVisit', true, '', 'dream' + (e.get('dream')) + ' = 1', null, function () {
+                new ActionType('templeVisit', true, false, '', 'dream' + (e.get('dream')) + ' = 1', null, function () {
                     return dreams[e.get('dream') - 1];
                 }),
                 e,
@@ -101,7 +131,7 @@ var types = [
         });
         if (player.length > 0 && !player[0].get('machete')) {
             return [
-                new ActionType('giveMachete', true, '', 'machete = 1', null, function () {
+                new ActionType('giveMachete', true, false, '', 'machete = 1', null, function () {
                     return ["You visit a weaponsmith who\ngifts you a machete", "large-machete"];
                 }),
                 e,
@@ -116,7 +146,7 @@ var types = [
         });
         if (player.length > 0 && !player[0].get('rope')) {
             return [
-                new ActionType('giveMachete', true, '', 'rope = 1', null, function () {
+                new ActionType('giveRope', true, false, '', 'rope = 1', null, function () {
                     return ["You visit a weaver who gifts you\na rope", "large-rope"];
                 }),
                 e,
@@ -124,7 +154,21 @@ var types = [
             ];
         }
     }),
-    new Type("candlemaker", "candlemaker", false, {'tile': 1}),
+    new Type("candlemaker", "candlemaker", false, {'tile': 1}, function(e, world) {
+        var neighbours = world.getNeighbours(e);
+        var player = neighbours.filter(function(e2) {
+            return e.get('x') == e2.get('x') && e.get('y') == e2.get('y') && e2.type.isPlayer;
+        });
+        if (player.length > 0 && player[0].get('candle') < 5) {
+            return [
+                new ActionType('giveCandles', true, false, '', 'candle + 3', null, function () {
+                    return ["You visit a candlemaker who gifts\nyou some candles", "large-candle"];
+                }),
+                e,
+                player[0]
+            ];
+        }
+    }),
     new Type("bat", "native", false, {}, function (e, world) {
         if (e.get('saidHello')) {
             return null;
@@ -136,7 +180,7 @@ var types = [
         if (player.length > 0) {
             e.set('saidHello', 1);
             return [
-                new ActionType('hello', true, '', '', null, function () {
+                new ActionType('hello', true, false, '', '', null, function () {
                     return ["You meet a local villager with the\nhead of a bat", "bat"]
                 }),
                 e,
@@ -155,7 +199,7 @@ var types = [
         if (player.length > 0) {
             e.set('saidHello', 1);
             return [
-                new ActionType('hello', true, '', '', null, function () {
+                new ActionType('hello', true, false, '', '', null, function () {
                     return ["You meet a local villager with the\nhead of a star-nosed mole", "star-nosed-mole"]
                 }),
                 e,
@@ -174,7 +218,7 @@ var types = [
         if (player.length > 0) {
             e.set('saidHello', 1);
             return [
-                new ActionType('hello', true, '', '', null, function () {
+                new ActionType('hello', true, false, '', '', null, function () {
                     return ["You meet a local villager with the\nhead of a bower bird", "bower-bird"]
                 }),
                 e,

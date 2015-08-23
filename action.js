@@ -1,5 +1,6 @@
-function ActionType(name, blockable, srcChanges, trgChanges, valid, describe) {
+function ActionType(name, showMessage, blockable, srcChanges, trgChanges, valid, describe) {
     this.name = name;
+    this.showMessage = showMessage;
     this.blockable = blockable;
     this.srcChanges = srcChanges;
     this.trgChanges = trgChanges;
@@ -16,7 +17,7 @@ function isActionValid(a, world) {
 }
 
 function isActionAllowed(a, world) {
-    return !a[0].blockable || !a[2].type.respond(a, world);
+    return !a[0].showMessage || !a[2].type.respond(a, world);
 }
 
 function getActionResponse(a, world) {
@@ -68,8 +69,8 @@ ActionType.prototype.run = function(src, trg, world) {
 };
 
 var moveActionTypes = [
-    new ActionType("move", true, "y - 1", ""),
-    new ActionType("move", true, "y + 1", ""),
-    new ActionType("move", true, "x - 1", ""),
-    new ActionType("move", true, "x + 1", ""),
+    new ActionType("move", true, true, "y - 1, caveTraveled = 0", ""),
+    new ActionType("move", true, true, "y + 1, caveTraveled = 0", ""),
+    new ActionType("move", true, true, "x - 1, caveTraveled = 0", ""),
+    new ActionType("move", true, true, "x + 1, caveTraveled = 0", ""),
 ];
