@@ -59,7 +59,9 @@ function input(msSinceLastUpdate) {
     }
     if (request) {
         if (keys['Y']) {
+            runAction(request, w);
             request = advanceWorld();
+            keys['Y'] = false;
         }
         return;
     }
@@ -84,10 +86,31 @@ function update(msSinceLastUpdate) {}
 
 function draw() {
     drawMap(c, w, thePlayer.get('x') - 5, thePlayer.get('y') - 6);
+    c.fillStyle = 'rgba(0, 0, 0, 0.33)';
+    c.fillRect(0, 600 - 53 - 10, 800, 64);
+    var x = 5;
+    resources.forEach(function(r) {
+        var amt = thePlayer.get(r.name);
+        if (amt) {
+            drawImg(c, 'item-' + r.name, x, 600 - 53 - 5);
+            if (amt > 1) {
+                c.fillStyle = '#fedbb1';
+                c.shadowColor = 'black';
+                c.shadowBlur = 4;
+                c.font = '20px Arial';
+                c.fillText("" + amt, x, 600 - 43);
+                c.shadowBlur = 0;
+            }
+            x += 85;
+        }
+    });
     if (msgTimeout > 0) {
         c.fillStyle = '#fedbb1';
+        c.shadowColor = 'black';
+        c.shadowBlur = 4;
         c.font = '20px Arial';
         c.fillText(msg[0], 5, 25);
+        c.shadowBlur = 0;
     }
     if (request) {
         var content = getActionDescription(request, w);

@@ -15,6 +15,26 @@ Type.prototype.respond = function (action, world) {
     return this._respond(action, world);
 };
 
+var resources = [
+    {'name': 'dream1'},
+    {'name': 'dream2'},
+    {'name': 'dream3'},
+    {'name': 'dream4'},
+    {'name': 'dream5'},
+    {'name': 'dream6'},
+    {'name': 'dream7'},
+    {'name': 'dream8'},
+    {'name': 'machete'},
+    {'name': 'rope'},
+    {'name': 'candle'}
+];
+
+var resourceMap = {};
+
+resources.forEach(function(r) {
+    resourceMap[r.name] = r;
+});
+
 var types = [
     new Type("angerbush", "angerbush-2", false, {'tile': 1}),
     new Type("boneyard", "boneyard", false, {'tile': 1}),
@@ -74,8 +94,36 @@ var types = [
     new Type("water", "water", false, {'tile': 1}, null, function () {
         return ['You can\'t cross the water', null];
     }),
-    new Type("weaponsmith", "weaponsmith", false, {'tile': 1}),
-    new Type("weaver", "weaver", false, {'tile': 1}),
+    new Type("weaponsmith", "weaponsmith", false, {'tile': 1}, function(e, world) {
+        var neighbours = world.getNeighbours(e);
+        var player = neighbours.filter(function(e2) {
+            return e.get('x') == e2.get('x') && e.get('y') == e2.get('y') && e2.type.isPlayer;
+        });
+        if (player.length > 0 && !player[0].get('machete')) {
+            return [
+                new ActionType('giveMachete', true, '', 'machete = 1', null, function () {
+                    return ["You visit a weaponsmith who\ngifts you a machete", "large-machete"];
+                }),
+                e,
+                player[0]
+            ];
+        }
+    }),
+    new Type("weaver", "weaver", false, {'tile': 1}, function(e, world) {
+        var neighbours = world.getNeighbours(e);
+        var player = neighbours.filter(function(e2) {
+            return e.get('x') == e2.get('x') && e.get('y') == e2.get('y') && e2.type.isPlayer;
+        });
+        if (player.length > 0 && !player[0].get('rope')) {
+            return [
+                new ActionType('giveMachete', true, '', 'rope = 1', null, function () {
+                    return ["You visit a weaver who gifts you\na rope", "large-rope"];
+                }),
+                e,
+                player[0]
+            ];
+        }
+    }),
     new Type("candlemaker", "candlemaker", false, {'tile': 1}),
     new Type("bat", "native", false, {}, function (e, world) {
         if (e.get('saidHello')) {
