@@ -27,7 +27,17 @@ var msg = '';
 var msgTimeout = 0;
 var request = null;
 
-var thePlayer = new Entity(new Type("player", "player", true, {}), {'x': 27, 'y': 13});
+function findPlayerLocation() {
+    for (var y = 0; y < w._map.length; y++) { for (var x = 0; x < w._map[0].length; x++) {
+        if (w._map[y][x][0].type == typeMap['skull-dreamer']) {
+            return [x, y];
+        }
+    }}
+}
+
+var pxy = findPlayerLocation();
+
+var thePlayer = new Entity(new Type("player", "player", true, {}), {'x': pxy[0], 'y': pxy[1]});
 w.add(thePlayer);
 
 function advanceWorld() {
